@@ -1,0 +1,30 @@
+services:
+  backend:
+    build:
+      context: .
+      dockerfile: backend/Dockerfile
+    env_file:
+      - .env
+    environment:
+      # In-container path, independent of whatever DB_PATH is set to in
+      # .env for local (non-Docker) dev - keeps it aligned with the
+      # db-data volume mount below.
+      DB_PATH: /app/backend/data/acm-tracker.db
+    volumes:
+      - db-data:/app/backend/data
+    expose:
+      - '3001'
+    restart: unless-stopped
+
+  frontend:
+    build:
+      context: .
+      dockerfile: frontend/Dockerfile
+    ports:
+      - '8080:80'
+    depends_on:
+      - backend
+    restart: unless-stopped
+
+volumes:
+  db-data:

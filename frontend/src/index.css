@@ -1,0 +1,402 @@
+:root {
+  color-scheme: light dark;
+  font-family: system-ui, -apple-system, 'Segoe UI', sans-serif;
+  --bg: #f5f6f8;
+  --surface: #ffffff;
+  --text: #1a1d23;
+  --text-muted: #5b6270;
+  --border: #dfe3e8;
+  --accent: #2f6fed;
+  --ok: #1e8e5a;
+  --stale: #b9720b;
+  --error: #c62828;
+}
+
+@media (prefers-color-scheme: dark) {
+  :root {
+    --bg: #14161a;
+    --surface: #1e2126;
+    --text: #eceef1;
+    --text-muted: #9aa1ac;
+    --border: #2d3138;
+  }
+}
+
+* {
+  box-sizing: border-box;
+}
+
+body {
+  margin: 0;
+  background: var(--bg);
+  color: var(--text);
+}
+
+button {
+  font-family: inherit;
+  cursor: pointer;
+}
+
+.page-loading {
+  padding: 2rem;
+  text-align: center;
+  color: var(--text-muted);
+}
+
+/* Login page */
+
+.login-page {
+  min-height: 100vh;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 1rem;
+}
+
+.login-form {
+  background: var(--surface);
+  border: 1px solid var(--border);
+  border-radius: 12px;
+  padding: 2rem;
+  width: 100%;
+  max-width: 320px;
+  display: flex;
+  flex-direction: column;
+  gap: 0.9rem;
+}
+
+.login-form h1 {
+  font-size: 1.15rem;
+  margin: 0 0 0.5rem;
+}
+
+.login-form label {
+  display: flex;
+  flex-direction: column;
+  gap: 0.3rem;
+  font-size: 0.85rem;
+  color: var(--text-muted);
+}
+
+.login-form input {
+  padding: 0.55rem 0.6rem;
+  border-radius: 8px;
+  border: 1px solid var(--border);
+  background: var(--bg);
+  color: var(--text);
+  font-size: 1rem;
+}
+
+.login-form button {
+  margin-top: 0.4rem;
+  padding: 0.6rem;
+  border-radius: 8px;
+  border: none;
+  background: var(--accent);
+  color: white;
+  font-size: 0.95rem;
+}
+
+.login-form button:disabled {
+  opacity: 0.6;
+  cursor: default;
+}
+
+.login-form__error {
+  color: var(--error);
+  font-size: 0.85rem;
+}
+
+/* App layout */
+
+.app-layout {
+  min-height: 100vh;
+  display: flex;
+  flex-direction: column;
+}
+
+.app-layout__header {
+  display: flex;
+  align-items: center;
+  gap: 1.5rem;
+  padding: 0.75rem 1.25rem;
+  background: var(--surface);
+  border-bottom: 1px solid var(--border);
+}
+
+.app-layout__title {
+  font-weight: 600;
+}
+
+.app-layout__nav {
+  display: flex;
+  gap: 1rem;
+  flex: 1;
+}
+
+.app-layout__nav a {
+  color: var(--text-muted);
+  text-decoration: none;
+  font-size: 0.9rem;
+}
+
+.app-layout__nav a.active {
+  color: var(--text);
+  font-weight: 600;
+}
+
+.app-layout__user {
+  display: flex;
+  align-items: center;
+  gap: 0.75rem;
+  font-size: 0.85rem;
+  color: var(--text-muted);
+}
+
+.app-layout__user a {
+  color: var(--text-muted);
+  text-decoration: none;
+}
+
+.app-layout__user a.active,
+.app-layout__user a:hover {
+  color: var(--text);
+}
+
+.app-layout__user button {
+  padding: 0.35rem 0.7rem;
+  border-radius: 6px;
+  border: 1px solid var(--border);
+  background: var(--surface);
+  color: var(--text);
+}
+
+.app-layout__main {
+  flex: 1;
+  padding: 1.5rem;
+  max-width: 1100px;
+  width: 100%;
+  margin: 0 auto;
+}
+
+/* Dashboard */
+
+.dashboard-page__header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  flex-wrap: wrap;
+  gap: 0.75rem;
+  margin-bottom: 1.25rem;
+}
+
+.dashboard-page__header h1 {
+  font-size: 1.3rem;
+  margin: 0;
+}
+
+.dashboard-page__error {
+  color: var(--error);
+}
+
+/* Account */
+
+.account-page h1 {
+  font-size: 1.3rem;
+  margin: 0 0 1.25rem;
+}
+
+.account-page .login-form {
+  margin: 0;
+  max-width: 320px;
+}
+
+.account-page .login-form h2 {
+  font-size: 1rem;
+  margin: 0 0 0.5rem;
+}
+
+.account-page__success {
+  color: var(--ok);
+  font-size: 0.85rem;
+}
+
+.dashboard-page__grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(220px, 1fr));
+  gap: 0.9rem;
+}
+
+.team-member-card {
+  background: var(--surface);
+  border: 1px solid var(--border);
+  border-radius: 10px;
+  padding: 1rem;
+  display: flex;
+  flex-direction: column;
+  gap: 0.3rem;
+}
+
+.team-member-card__name {
+  font-weight: 600;
+}
+
+.team-member-card__door {
+  color: var(--text-muted);
+  font-size: 0.9rem;
+}
+
+.team-member-card__time {
+  font-size: 0.8rem;
+  color: var(--text-muted);
+}
+
+.team-member-card__previous {
+  margin-top: 0.35rem;
+  padding-top: 0.35rem;
+  border-top: 1px solid var(--border);
+  display: flex;
+  flex-direction: column;
+  gap: 0.1rem;
+}
+
+.team-member-card__previous-door,
+.team-member-card__previous-time {
+  font-size: 0.72rem;
+  color: var(--text-muted);
+  opacity: 0.75;
+}
+
+.as-of-badge {
+  font-size: 0.8rem;
+  padding: 0.3rem 0.65rem;
+  border-radius: 999px;
+  border: 1px solid var(--border);
+  white-space: nowrap;
+}
+
+.as-of-badge--ok {
+  color: var(--ok);
+  border-color: var(--ok);
+}
+
+.as-of-badge--stale {
+  color: var(--stale);
+  border-color: var(--stale);
+}
+
+.as-of-badge--error {
+  color: var(--error);
+  border-color: var(--error);
+}
+
+.as-of-badge--unknown {
+  color: var(--text-muted);
+}
+
+/* Roster admin */
+
+.roster-admin-page__header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  margin-bottom: 1.25rem;
+}
+
+.roster-admin-page__header h1 {
+  font-size: 1.3rem;
+  margin: 0;
+}
+
+.roster-table-wrapper {
+  overflow-x: auto;
+  background: var(--surface);
+  border: 1px solid var(--border);
+  border-radius: 10px;
+}
+
+.roster-table {
+  width: 100%;
+  border-collapse: collapse;
+  font-size: 0.9rem;
+}
+
+.roster-table th,
+.roster-table td {
+  text-align: left;
+  padding: 0.6rem 0.8rem;
+  border-bottom: 1px solid var(--border);
+  white-space: nowrap;
+}
+
+.roster-table tr:last-child td {
+  border-bottom: none;
+}
+
+.roster-table td.roster-table__notes {
+  white-space: normal;
+  max-width: 240px;
+}
+
+.roster-table tr.roster-table__row--inactive {
+  opacity: 0.55;
+}
+
+.roster-table button {
+  padding: 0.3rem 0.6rem;
+  border-radius: 6px;
+  border: 1px solid var(--border);
+  background: var(--bg);
+  color: var(--text);
+  font-size: 0.8rem;
+}
+
+.roster-form {
+  background: var(--surface);
+  border: 1px solid var(--border);
+  border-radius: 10px;
+  padding: 1rem;
+  margin-bottom: 1.25rem;
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.75rem;
+  align-items: flex-end;
+}
+
+.roster-form label {
+  display: flex;
+  flex-direction: column;
+  gap: 0.3rem;
+  font-size: 0.8rem;
+  color: var(--text-muted);
+}
+
+.roster-form input {
+  padding: 0.5rem 0.6rem;
+  border-radius: 8px;
+  border: 1px solid var(--border);
+  background: var(--bg);
+  color: var(--text);
+  font-size: 0.9rem;
+  min-width: 160px;
+}
+
+.roster-form button {
+  padding: 0.55rem 1rem;
+  border-radius: 8px;
+  border: none;
+  background: var(--accent);
+  color: white;
+  font-size: 0.9rem;
+}
+
+.roster-form button:disabled {
+  opacity: 0.6;
+  cursor: default;
+}
+
+.roster-form__error {
+  color: var(--error);
+  font-size: 0.85rem;
+  width: 100%;
+}
