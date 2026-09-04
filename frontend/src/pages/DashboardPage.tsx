@@ -2,6 +2,7 @@ import { api } from '../api/client.js';
 import { usePolling } from '../hooks/usePolling.js';
 import { AsOfBadge } from '../components/AsOfBadge.js';
 import { TeamMemberCard } from '../components/TeamMemberCard.js';
+import { DashboardClock } from '../components/DashboardClock.js';
 
 const DASHBOARD_POLL_INTERVAL_MS = 20_000;
 
@@ -13,6 +14,7 @@ export function DashboardPage() {
     <div className="dashboard-page">
       <div className="dashboard-page__header">
         <h1>Team Badge Status</h1>
+        <DashboardClock />
         <AsOfBadge health={health.data} />
       </div>
 

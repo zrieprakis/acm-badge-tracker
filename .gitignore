@@ -10,3 +10,6 @@ data/
 .DS_Store
 coverage/
 .claude/
+
+# Contains a private key - must never be committed.
+SelfSigned/

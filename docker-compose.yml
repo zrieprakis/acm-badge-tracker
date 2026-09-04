@@ -21,7 +21,13 @@ services:
       context: .
       dockerfile: frontend/Dockerfile
     ports:
-      - '8080:80'
+      - '80:80'
+      - '443:443'
+    volumes:
+      # Self-signed cert for speedsupsrvr.hammond.k12.in.us (see nginx.conf).
+      # Mounted read-only rather than baked into the image, same reasoning
+      # as .env - keeps the private key out of the built image.
+      - ./SelfSigned:/etc/nginx/certs:ro
     depends_on:
       - backend
     restart: unless-stopped

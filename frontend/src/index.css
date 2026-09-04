@@ -10,6 +10,7 @@
   --ok: #1e8e5a;
   --stale: #b9720b;
   --error: #c62828;
+  --surface-highlight: #e7eaef;
 }
 
 @media (prefers-color-scheme: dark) {
@@ -19,6 +20,7 @@
     --text: #eceef1;
     --text-muted: #9aa1ac;
     --border: #2d3138;
+    --surface-highlight: #363c46;
   }
 }
 
@@ -182,10 +184,9 @@ button {
 /* Dashboard */
 
 .dashboard-page__header {
-  display: flex;
+  display: grid;
+  grid-template-columns: 1fr auto 1fr;
   align-items: center;
-  justify-content: space-between;
-  flex-wrap: wrap;
   gap: 0.75rem;
   margin-bottom: 1.25rem;
 }
@@ -193,6 +194,18 @@ button {
 .dashboard-page__header h1 {
   font-size: 1.3rem;
   margin: 0;
+  justify-self: start;
+}
+
+.dashboard-page__header .as-of-badge {
+  justify-self: end;
+}
+
+.dashboard-clock {
+  justify-self: center;
+  font-size: 1.05rem;
+  font-variant-numeric: tabular-nums;
+  color: var(--text-muted);
 }
 
 .dashboard-page__error {
@@ -235,6 +248,11 @@ button {
   display: flex;
   flex-direction: column;
   gap: 0.3rem;
+}
+
+/** Swiped in today between 5am-5pm (school local time) - reads as "at work today" at a glance. */
+.team-member-card--present {
+  background: var(--surface-highlight);
 }
 
 .team-member-card__name {

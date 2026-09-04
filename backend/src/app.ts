@@ -12,6 +12,16 @@ import { healthRoutes } from './routes/healthRoutes.js';
 export function createApp(): Express {
   const app = express();
 
+  // Backend is only ever reached through nginx (it's not published to the
+  // host in docker-compose.yml), which terminates TLS and forwards
+  // X-Forwarded-Proto. Without this, Express sees every request as plain
+  // HTTP (the nginx->backend hop is unencrypted), so express-session's
+  // secure cookie (cookie.secure=true in production - see
+  // sessionMiddleware.ts) never actually gets sent to the browser: no
+  // error, just a silently missing Set-Cookie header. "1" trusts exactly
+  // one hop of proxying, matching this exact topology.
+  app.set('trust proxy', 1);
+
   app.use(cors());
   app.use(express.json());
   app.use(requestLogger);
