@@ -1,5 +1,12 @@
 services:
   backend:
+    # Explicit, stable image name (rather than Compose's default
+    # <project-dir-name>-backend) so a `docker save`/`docker load`'d image
+    # is recognized as a match regardless of what the folder is named on
+    # whatever host runs this - `docker compose up` uses an existing local
+    # image under this tag if present, and only falls back to building
+    # from the Dockerfile below if it isn't.
+    image: acm-badge-tracker-backend:latest
     build:
       context: .
       dockerfile: backend/Dockerfile
@@ -17,6 +24,7 @@ services:
     restart: unless-stopped
 
   frontend:
+    image: acm-badge-tracker-frontend:latest
     build:
       context: .
       dockerfile: frontend/Dockerfile
