@@ -76,6 +76,9 @@ export class AvigilonAcmClient implements AcmClient {
   private readonly badgeToIdentityCn = new Map<string, string>();
   private doorNameByDn: Map<string, string> | undefined;
   private doorMapFetchedAt = 0;
+  /** Shared by concurrent callers so a cold/stale cache triggers one
+   * /doors.xml fetch, not one per badge being resolved in parallel. */
+  private doorMapFetchPromise: Promise<Map<string, string>> | undefined;
 
   constructor(options: AvigilonAcmClientOptions) {
     this.http = new AvigilonHttpClient(options);
@@ -125,21 +128,29 @@ export class AvigilonAcmClient implements AcmClient {
    * predates when they were added to the tracked roster.
    */
   async getRecentAccessEvents(cardholderIds: string[], _since: Date): Promise<AcmAccessEvent[]> {
-    const events: AcmAccessEvent[] = [];
+    // Each badge's own lookup is a couple of sequential requests (resolve
+    // identity, then fetch its tokens), but different badges are fully
+    // independent - running them in parallel rather than one at a time
+    // keeps a poll cycle well under the poll interval regardless of roster
+    // size. No concurrency cap: tens of badges is well within what a
+    // single ACM appliance and Node's default outbound connections handle
+    // comfortably - worth revisiting only if the roster ever grows into
+    // the hundreds.
+    const results = await Promise.all(
+      cardholderIds.map(async (badgeNumber) => {
+        try {
+          return await this.getLastEventForBadge(badgeNumber);
+        } catch (err) {
+          console.warn(
+            `ACM: failed to fetch access state for badge "${badgeNumber}":`,
+            err instanceof Error ? err.message : err,
+          );
+          return undefined;
+        }
+      }),
+    );
 
-    for (const badgeNumber of cardholderIds) {
-      try {
-        const event = await this.getLastEventForBadge(badgeNumber);
-        if (event) events.push(event);
-      } catch (err) {
-        console.warn(
-          `ACM: failed to fetch access state for badge "${badgeNumber}":`,
-          err instanceof Error ? err.message : err,
-        );
-      }
-    }
-
-    return events;
+    return results.filter((event): event is AcmAccessEvent => event !== undefined);
   }
 
   /**
@@ -232,6 +243,16 @@ export class AvigilonAcmClient implements AcmClient {
       return this.doorNameByDn;
     }
 
+    if (!this.doorMapFetchPromise) {
+      this.doorMapFetchPromise = this.fetchDoorNameMap().finally(() => {
+        this.doorMapFetchPromise = undefined;
+      });
+    }
+
+    return this.doorMapFetchPromise;
+  }
+
+  private async fetchDoorNameMap(): Promise<Map<string, string>> {
     const res = await this.http.get('/doors.xml');
     if (res.status !== 200) {
       throw new Error(`Failed to fetch ACM doors list (HTTP ${res.status}).`);
