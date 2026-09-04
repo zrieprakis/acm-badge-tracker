@@ -42,3 +42,8 @@ services:
 
 volumes:
   db-data:
+    # Explicit name (otherwise Compose derives <project-dir-name>_db-data)
+    # so a helper container can target this volume by a known, stable name
+    # regardless of what the folder is named on whatever host runs this -
+    # same reasoning as the image tags above.
+    name: acm-badge-tracker-db-data
