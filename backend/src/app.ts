@@ -8,6 +8,7 @@ import { authRoutes } from './routes/authRoutes.js';
 import { dashboardRoutes } from './routes/dashboardRoutes.js';
 import { teamRoutes } from './routes/teamRoutes.js';
 import { healthRoutes } from './routes/healthRoutes.js';
+import { reportRoutes } from './routes/reportRoutes.js';
 
 export function createApp(): Express {
   const app = express();
@@ -35,6 +36,7 @@ export function createApp(): Express {
   app.use('/api', requireAuth, dashboardRoutes);
   app.use('/api', requireAuth, teamRoutes);
   app.use('/api', requireAuth, healthRoutes);
+  app.use('/api', requireAuth, reportRoutes);
 
   app.use(errorHandler);
 

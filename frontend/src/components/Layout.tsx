@@ -12,6 +12,7 @@ export function Layout() {
           <NavLink to="/" end>
             Dashboard
           </NavLink>
+          <NavLink to="/reports">Reports</NavLink>
           <NavLink to="/admin/roster">Roster Admin</NavLink>
         </nav>
         <div className="app-layout__user">

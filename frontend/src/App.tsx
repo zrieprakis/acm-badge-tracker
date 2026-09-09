@@ -4,6 +4,7 @@ import { RequireAuth } from './auth/RequireAuth.js';
 import { Layout } from './components/Layout.js';
 import { LoginPage } from './pages/LoginPage.js';
 import { DashboardPage } from './pages/DashboardPage.js';
+import { ReportsPage } from './pages/ReportsPage.js';
 import { RosterAdminPage } from './pages/RosterAdminPage.js';
 import { AccountPage } from './pages/AccountPage.js';
 
@@ -16,6 +17,7 @@ export default function App() {
           <Route element={<RequireAuth />}>
             <Route element={<Layout />}>
               <Route path="/" element={<DashboardPage />} />
+              <Route path="/reports" element={<ReportsPage />} />
               <Route path="/admin/roster" element={<RosterAdminPage />} />
               <Route path="/account" element={<AccountPage />} />
             </Route>

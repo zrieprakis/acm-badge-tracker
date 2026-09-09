@@ -63,3 +63,15 @@ export interface ChangePasswordInput {
 export interface ApiErrorBody {
   error: string;
 }
+
+/** One team member's first and last recorded swipe on one school-local calendar day. */
+export interface FirstLastSwipeReportEntryDTO {
+  teamMemberId: number;
+  displayName: string;
+  /** School-local calendar date (America/Chicago), YYYY-MM-DD. */
+  date: string;
+  firstEventTimestamp: string;
+  firstDoorName: string | null;
+  lastEventTimestamp: string;
+  lastDoorName: string | null;
+}

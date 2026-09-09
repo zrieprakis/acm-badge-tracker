@@ -418,3 +418,38 @@ button {
   font-size: 0.85rem;
   width: 100%;
 }
+
+/* Reports */
+
+.reports-page__selector {
+  display: flex;
+  align-items: center;
+  gap: 0.6rem;
+  font-size: 0.85rem;
+  color: var(--text-muted);
+  margin-bottom: 1.25rem;
+}
+
+.reports-page__selector select {
+  padding: 0.45rem 0.6rem;
+  border-radius: 8px;
+  border: 1px solid var(--border);
+  background: var(--surface);
+  color: var(--text);
+  font-size: 0.9rem;
+}
+
+.report-table__group-button {
+  all: unset;
+  cursor: pointer;
+  font: inherit;
+  color: inherit;
+}
+
+.report-table__group-button:hover {
+  color: var(--text);
+}
+
+.report-table__row--group-start td {
+  border-top: 2px solid var(--text-muted);
+}

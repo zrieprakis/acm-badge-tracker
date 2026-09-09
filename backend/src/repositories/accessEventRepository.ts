@@ -1,4 +1,4 @@
-import { desc, eq, lt } from 'drizzle-orm';
+import { and, desc, eq, gte, lt } from 'drizzle-orm';
 import { db } from '../db/client.js';
 import { accessEventHistory, lastAccessEvents, teamMembers } from '../db/schema.js';
 
@@ -22,6 +22,13 @@ export interface DashboardRow {
 }
 
 export interface PreviousEvent {
+  doorName: string | null;
+  eventTimestamp: string;
+}
+
+export interface HistoryRow {
+  teamMemberId: number;
+  displayName: string;
   doorName: string | null;
   eventTimestamp: string;
 }
@@ -127,6 +134,31 @@ export const accessEventRepository = {
     }
 
     return result;
+  },
+
+  /**
+   * Raw history rows (joined to displayName) with eventTimestamp in
+   * [startIso, endIso). Callers own bucketing these into calendar days,
+   * since "day" is time-zone-dependent (school-local, not UTC) and that
+   * doesn't belong in the repository layer.
+   */
+  async getHistoryInRange(startIso: string, endIso: string): Promise<HistoryRow[]> {
+    return db
+      .select({
+        teamMemberId: accessEventHistory.teamMemberId,
+        displayName: teamMembers.displayName,
+        doorName: accessEventHistory.doorName,
+        eventTimestamp: accessEventHistory.eventTimestamp,
+      })
+      .from(accessEventHistory)
+      .innerJoin(teamMembers, eq(teamMembers.id, accessEventHistory.teamMemberId))
+      .where(
+        and(
+          gte(accessEventHistory.eventTimestamp, startIso),
+          lt(accessEventHistory.eventTimestamp, endIso),
+        ),
+      )
+      .orderBy(accessEventHistory.teamMemberId, accessEventHistory.eventTimestamp);
   },
 
   async pruneHistoryOlderThan(cutoffIso: string): Promise<number> {

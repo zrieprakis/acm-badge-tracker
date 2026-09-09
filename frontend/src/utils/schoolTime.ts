@@ -37,6 +37,34 @@ export function formatSchoolClock(date: Date): string {
   }).format(date);
 }
 
+/** A swipe timestamp for display in a report row, e.g. "9:03 AM". */
+export function formatSchoolTime(eventTimestamp: string): string {
+  return formatSchoolClock(new Date(eventTimestamp));
+}
+
+/** A report's YYYY-MM-DD bucket key for display, e.g. "Tue, Sep 8, 2026". */
+export function formatSchoolDateKey(dateKey: string): string {
+  return new Intl.DateTimeFormat('en-US', {
+    timeZone: 'UTC',
+    weekday: 'short',
+    month: 'short',
+    day: 'numeric',
+    year: 'numeric',
+  }).format(new Date(`${dateKey}T00:00:00.000Z`));
+}
+
+/** Today's date (YYYY-MM-DD) in the school's time zone - for defaulting a report's date range. */
+export function todaySchoolDateKey(now: Date = new Date()): string {
+  return getPartsInSchoolTimeZone(now).dateKey;
+}
+
+/** Adds (or subtracts, if negative) whole days to a YYYY-MM-DD key. */
+export function addDaysToDateKey(dateKey: string, days: number): string {
+  const date = new Date(`${dateKey}T00:00:00.000Z`);
+  date.setUTCDate(date.getUTCDate() + days);
+  return date.toISOString().slice(0, 10);
+}
+
 /**
  * True if `eventTimestamp` falls on today's date (in the school's time
  * zone) and between 5am-5pm. A swipe from a prior day never counts, even

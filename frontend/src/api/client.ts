@@ -4,6 +4,7 @@ import type {
   ChangePasswordInput,
   CreateTeamMemberInput,
   DashboardEntryDTO,
+  FirstLastSwipeReportEntryDTO,
   HealthStatusDTO,
   LoginInput,
   TeamMemberDTO,
@@ -63,4 +64,9 @@ export const api = {
     request<TeamMemberDTO>(`/team/${id}`, { method: 'PUT', body: JSON.stringify(input) }),
   deactivateTeamMember: (id: number) => request<TeamMemberDTO>(`/team/${id}`, { method: 'DELETE' }),
   deleteTeamMember: (id: number) => request<void>(`/team/${id}?hard=true`, { method: 'DELETE' }),
+
+  getFirstLastSwipeReport: (start: string, end: string) =>
+    request<FirstLastSwipeReportEntryDTO[]>(
+      `/reports/first-last-swipe?start=${start}&end=${end}`,
+    ),
 };

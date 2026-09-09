@@ -245,6 +245,94 @@ describe('/api/team CRUD', () => {
   });
 });
 
+describe('GET /api/reports/first-last-swipe', () => {
+  it('returns 400 for a malformed date', async () => {
+    const agent = await loggedInAgent();
+    const res = await agent.get('/api/reports/first-last-swipe?start=not-a-date&end=2026-01-15');
+    expect(res.status).toBe(400);
+  });
+
+  it('returns 400 when start is after end', async () => {
+    const agent = await loggedInAgent();
+    const res = await agent.get(
+      '/api/reports/first-last-swipe?start=2026-01-20&end=2026-01-01',
+    );
+    expect(res.status).toBe(400);
+  });
+
+  it('reports the first and last swipe per day, per person', async () => {
+    const agent = await loggedInAgent();
+    const member = await teamMemberRepository.create({
+      displayName: 'Report Person',
+      acmCardholderId: 'CARD-REPORT-1',
+    });
+
+    // Same school-local day (America/Chicago, no DST in early January - CST, UTC-6).
+    await accessEventRepository.recordEventIfNewer({
+      teamMemberId: member.id,
+      doorName: 'Front Door',
+      doorId: 'front',
+      eventType: 'granted',
+      eventTimestamp: '2026-01-15T14:03:00.000Z', // 8:03am Chicago
+      rawEventId: 'evt-morning',
+    });
+    await accessEventRepository.recordEventIfNewer({
+      teamMemberId: member.id,
+      doorName: 'Side Door',
+      doorId: 'side',
+      eventType: 'granted',
+      eventTimestamp: '2026-01-15T22:47:00.000Z', // 4:47pm Chicago
+      rawEventId: 'evt-afternoon',
+    });
+
+    const res = await agent.get(
+      '/api/reports/first-last-swipe?start=2026-01-15&end=2026-01-15',
+    );
+
+    expect(res.status).toBe(200);
+    const entry = res.body.find(
+      (e: { teamMemberId: number }) => e.teamMemberId === member.id,
+    );
+    expect(entry).toMatchObject({
+      date: '2026-01-15',
+      firstDoorName: 'Front Door',
+      lastDoorName: 'Side Door',
+    });
+  });
+
+  it('buckets a late-night swipe into the correct school-local day, not its UTC day', async () => {
+    const agent = await loggedInAgent();
+    const member = await teamMemberRepository.create({
+      displayName: 'Late Night Person',
+      acmCardholderId: 'CARD-REPORT-2',
+    });
+
+    // 11:30pm Chicago on Jan 15 (CST, UTC-6) lands on Jan 16 UTC.
+    await accessEventRepository.recordEventIfNewer({
+      teamMemberId: member.id,
+      doorName: 'Front Door',
+      doorId: 'front',
+      eventType: 'granted',
+      eventTimestamp: '2026-01-16T05:30:00.000Z',
+      rawEventId: 'evt-late',
+    });
+
+    const jan15Res = await agent.get(
+      '/api/reports/first-last-swipe?start=2026-01-15&end=2026-01-15',
+    );
+    expect(
+      jan15Res.body.find((e: { teamMemberId: number }) => e.teamMemberId === member.id),
+    ).toMatchObject({ date: '2026-01-15' });
+
+    const jan16Res = await agent.get(
+      '/api/reports/first-last-swipe?start=2026-01-16&end=2026-01-16',
+    );
+    expect(
+      jan16Res.body.find((e: { teamMemberId: number }) => e.teamMemberId === member.id),
+    ).toBeUndefined();
+  });
+});
+
 describe('PUT /api/auth/password', () => {
   it('rejects without a session', async () => {
     const res = await request(app)
