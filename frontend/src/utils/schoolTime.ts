@@ -42,6 +42,23 @@ export function formatSchoolTime(eventTimestamp: string): string {
   return formatSchoolClock(new Date(eventTimestamp));
 }
 
+/** A swipe timestamp with its date for the dashboard cards, e.g. "09:03am  09/08/26". */
+export function formatSchoolTimeWithDate(eventTimestamp: string): string {
+  const parts = new Intl.DateTimeFormat('en-US', {
+    timeZone: SCHOOL_TIME_ZONE,
+    year: '2-digit',
+    month: '2-digit',
+    day: '2-digit',
+    hour: '2-digit',
+    minute: '2-digit',
+    hour12: true,
+  }).formatToParts(new Date(eventTimestamp));
+
+  const get = (type: string) => parts.find((p) => p.type === type)?.value ?? '';
+
+  return `${get('hour')}:${get('minute')}${get('dayPeriod').toLowerCase()}  ${get('month')}/${get('day')}/${get('year')}`;
+}
+
 /** A report's YYYY-MM-DD bucket key for display, e.g. "Tue, Sep 8, 2026". */
 export function formatSchoolDateKey(dateKey: string): string {
   return new Intl.DateTimeFormat('en-US', {
